@@ -17,10 +17,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory(10)->create();
+        \App\Models\User::factory(100)->create();
         \App\Models\Categoria::factory(5)->create();
         //Primero creamos Usuarios y Categorias por que Entrada necesita sus IDs
-        \App\Models\Entrada::factory(20)->create();
+        \App\Models\Entrada::factory(50)->create();
         //Por último creamos los Comentarios usando los IDs de Usuarios y Entradas
         //TODO: Hacer seeding de Comentarios
         /*         ComentarioFactory::create(); */
