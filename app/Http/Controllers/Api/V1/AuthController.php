@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth as FacadesJWTAuth;
+use Tymon\JWTAuth\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -41,15 +43,26 @@ class AuthController extends Controller
             return response()->json('Correo o contraseña incorrectos', 401);
         }
 
-        return $this->respondWithToken($token);
+        //return $this->respondWithToken($token);
+        return response()->json([
+            'response' => $this->respondWithToken($token),
+            'userRol' => FacadesJWTAuth::user()->rol
+        ]);
+        /*
+         return response()->json([
+            'response' => $this->respondWithToken($token),
+            'user' => JWTAuth::user()
+        ]);*/
     }
 
     public function register(Request $request)
     {
+        $credentials = request(['email', 'password']);
+
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
+            'password' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -60,10 +73,16 @@ class AuthController extends Controller
             $validator->validated(),
             ['password' => bcrypt($request->password)]
         ));
-        
+        //dd($credentials); 
+
+
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json('Datos incorrectos incorrectos', 401);
+        }
+
         return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
+            'response' => $this->respondWithToken($token),
+            'userRol' => FacadesJWTAuth::user()->rol
         ], 201);
     }
 

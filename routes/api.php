@@ -27,7 +27,8 @@ Route::group([
 });
 
 
+Route::apiResource('v1/usuarios', App\Http\Controllers\Api\V1\UsuarioController::class)->middleware('api');
 Route::apiResource('v1/entradas', App\Http\Controllers\Api\V1\EntradaController::class)->middleware('api');
 Route::apiResource('v1/categorias', App\Http\Controllers\Api\V1\CategoriaController::class)->middleware('api');
 Route::get('categoria/{categoria}', [App\Http\Controllers\Api\V1\CategoriaController::class, 'show'])->middleware('api');
-Route::apiResource('v1/comentarios', App\Http\Controllers\Api\V1\ComentarioController::class)->middleware('api');
+//Route::apiResource('v1/comentarios', App\Http\Controllers\Api\V1\ComentarioController::class)->middleware('api');

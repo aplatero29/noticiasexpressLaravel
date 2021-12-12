@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Models\Entrada;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\V1\CategoriaRequest;
-use App\Http\Resources\V1\CategoriaResource;
-use App\Models\Entrada;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\V1\CategoriaRequest;
+use App\Http\Resources\V1\EntradaResource;
+use App\Http\Resources\V1\CategoriaResource;
 
 class CategoriaController extends Controller
 {
@@ -64,7 +65,7 @@ class CategoriaController extends Controller
     {
         $categoria = Categoria::where('id', $categoriaId)->first();
 
-        $entradas = Entrada::where('categoria_id', $categoriaId)->orderBy('created_at')->get();
+        $entradas = EntradaResource::collection(Entrada::where('categoria_id', $categoriaId)->orderBy('created_at')->get());
         return [
             'categoria' => $categoria,
             'entradas' => $entradas,

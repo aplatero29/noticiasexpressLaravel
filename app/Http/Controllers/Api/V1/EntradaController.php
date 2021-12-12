@@ -25,7 +25,11 @@ class EntradaController extends Controller
      */
     public function index()
     {
-        return EntradaResource::collection(Entrada::latest()->paginate());
+        if (request('page_size')) {
+            $pageSize = request('page_size');
+            return EntradaResource::collection(Entrada::paginate($pageSize));
+        }
+        return EntradaResource::collection(Entrada::paginate(10));
     }
 
     /**
@@ -39,11 +43,12 @@ class EntradaController extends Controller
         $request->validated();
 
         $user = Auth::user();
-        
-        $entrada = new Entrada();
 
+        $entrada = new Entrada();
+        $categoria = Categoria::find($request->input('categoria_id'));
+        $entrada->categoria()->associate($categoria);
         $entrada->user()->associate($user);
-        
+
 
         $url_image = $this->upload($request->file('imagen'));
         $entrada->imagen = $url_image;
@@ -51,9 +56,6 @@ class EntradaController extends Controller
         $entrada->descripcion = $request->input('descripcion');
         $entrada->categoria_id = $request->input('categoria_id');
 
-        $categoria = new Categoria();
-        $entrada->categoria()->associate($categoria);
-        
 
         $res = $entrada->save();
 
@@ -93,13 +95,16 @@ class EntradaController extends Controller
      */
     public function update(Request $request, Entrada $entrada)
     {
+        dd($request, $entrada, $entrada->id);
         Validator::make($request->all(), [
             'titulo' => 'max:191',
             'imagen' => 'image|max:1024',
             'descripcion' => 'max:2000',
+            'user_id' => 'required|exists:Users,id',
+            'categoria_id' => 'required|exists:Categorias,id'
         ])->validate();
-
-        if (Auth::id() !== $entrada->user->id) {
+        
+        if (Auth::id() !== $entrada->user->id && Auth::user()->rol !== 'Admin') {
             return response()->json(['message' => 'You don\'t have permissions'], 403);
         }
 
@@ -113,14 +118,17 @@ class EntradaController extends Controller
             $url_image = $this->upload($request->file('imagen'));
             $entrada->imagen = $url_image;
         }
-        if (!empty($request->input('categoria'))) {
-            $entrada->categoria = $request->input('categoria');
+        if (!empty($request->input('categoria_id'))) {
+            $entrada->categoria_id = $request->input('categoria_id');
+        }
+        if (!empty($request->input('user_id'))) {
+            $entrada->user_id = $request->input('user_id');
         }
 
         $res = $entrada->save();
 
         if ($res) {
-            return response()->json(['message' => 'Entry update succesfully']);
+            return response()->json(['message' => 'Entrada actualizada correctamente'], 200);
         }
 
         return response()->json(['message' => 'Error to update entry'], 500);
