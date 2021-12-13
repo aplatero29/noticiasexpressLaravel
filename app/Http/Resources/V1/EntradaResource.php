@@ -21,6 +21,7 @@ class EntradaResource extends JsonResource
             'descripcion' => $this->descripcion,
             'imagen' => url($this->imagen),
             'autor' => [
+                'id' => $this->user->id,
                 'nombre' => $this->user->nombre,
                 'email' => $this->user->email,
             ],
