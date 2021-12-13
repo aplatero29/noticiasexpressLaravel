@@ -61,7 +61,18 @@ class CategoriaController extends Controller
      * @param  \App\Models\Categoria  $categoria
      * @return \Illuminate\Http\Response
      */
-    public function show(int $categoriaId)
+    public function show(Categoria $categoria)
+    {
+        return new CategoriaResource($categoria);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Categoria  $categoria
+     * @return \Illuminate\Http\Response
+     */
+    public function showByCategory(int $categoriaId)
     {
         $categoria = Categoria::where('id', $categoriaId)->first();
 

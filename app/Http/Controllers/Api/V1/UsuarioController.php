@@ -8,8 +8,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\V1\UsuarioRequest;
+use App\Http\Resources\V1\EntradaResource;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\V1\UsuarioResource;
+use App\Models\Entrada;
 
 use function PHPUnit\Framework\isNull;
 
@@ -79,6 +81,22 @@ class UsuarioController extends Controller
     {
         $user = User::where('id', $idUsuario)->first();
         return new UsuarioResource($user);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function showByUser(int $idUsuario)
+    {
+        $user = User::where('id', $idUsuario)->first();
+        $entradas = EntradaResource::collection(Entrada::where('user_id', $idUsuario)->orderBy('created_at')->get());
+        return [
+            'usuario' => $user,
+            'entradas' => $entradas,
+        ];
     }
 
     /**
