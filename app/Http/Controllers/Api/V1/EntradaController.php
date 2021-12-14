@@ -95,7 +95,6 @@ class EntradaController extends Controller
      */
     public function update(Request $request, Entrada $entrada)
     {
-        dd($request, $entrada, $entrada->id);
         Validator::make($request->all(), [
             'titulo' => 'max:191',
             'imagen' => 'image|max:1024',
