@@ -29,7 +29,7 @@ class EntradaController extends Controller
             $pageSize = request('page_size');
             return EntradaResource::collection(Entrada::paginate($pageSize));
         }
-        return EntradaResource::collection(Entrada::paginate(10));
+        return EntradaResource::collection(Entrada::all());
     }
 
     /**
