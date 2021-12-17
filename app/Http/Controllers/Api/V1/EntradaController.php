@@ -97,10 +97,9 @@ class EntradaController extends Controller
     {
         Validator::make($request->all(), [
             'titulo' => 'max:191',
-            'imagen' => 'image|max:1024',
             'descripcion' => 'max:2000',
-            'user_id' => 'required|exists:Users,id',
-            'categoria_id' => 'required|exists:Categorias,id'
+            /* 'user_id' => 'required|exists:Users,id',
+            'categoria_id' => 'required|exists:Categorias,id' */
         ])->validate();
         
         if (Auth::id() !== $entrada->user->id && Auth::user()->rol !== 'Admin') {
@@ -113,10 +112,10 @@ class EntradaController extends Controller
         if (!empty($request->input('descripcion'))) {
             $entrada->descripcion = $request->input('descripcion');
         }
-        if (!empty($request->file('imagen'))) {
+        /* if (!empty($request->file('imagen'))) {
             $url_image = $this->upload($request->file('imagen'));
             $entrada->imagen = $url_image;
-        }
+        } */
         if (!empty($request->input('categoria_id'))) {
             $entrada->categoria_id = $request->input('categoria_id');
         }
