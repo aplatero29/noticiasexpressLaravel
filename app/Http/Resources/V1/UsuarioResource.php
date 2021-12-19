@@ -20,8 +20,8 @@ class UsuarioResource extends JsonResource
             'email' => $this->email,
             'password' => $this->password,
             'rol' => $this->rol,
-            //'entradas' => [],
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
         ];
     }
 }

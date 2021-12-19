@@ -29,6 +29,7 @@ Route::group([
 
 Route::apiResource('v1/usuarios', App\Http\Controllers\Api\V1\UsuarioController::class)->middleware('api');
 Route::get('v1/usuario/{usuario}', [App\Http\Controllers\Api\V1\UsuarioController::class, 'showByUser'])->middleware('api');
+Route::put('v1/usuario/{usuario}', [App\Http\Controllers\Api\V1\UsuarioController::class, 'updateByAdmin'])->middleware('api');
 Route::apiResource('v1/entradas', App\Http\Controllers\Api\V1\EntradaController::class)->middleware('api');
 Route::apiResource('v1/categorias', App\Http\Controllers\Api\V1\CategoriaController::class)->middleware('api');
 Route::get('v1/categoria/{categoria}', [App\Http\Controllers\Api\V1\CategoriaController::class, 'showByCategory'])->middleware('api');

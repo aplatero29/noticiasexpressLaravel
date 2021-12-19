@@ -30,7 +30,7 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        return UsuarioResource::collection(User::latest()->paginate());
+        return UsuarioResource::collection(User::all());
     }
 
     /**
@@ -125,10 +125,10 @@ class UsuarioController extends Controller
         //dd($request, $user, $user->id);
 
         if (Auth::id() !== $user->id) {
-            return response()->json(['message' => 'You don\'t have permissions'], 403);
+            return response()->json(['message' => 'No tienes suficientes permisos'], 403);
         }
         if (Hash::check($request->input('newPassword'), $user->password)) {
-            return response()->json(['message' => 'You don\'t have permissions'], 403);
+            return response()->json(['message' => 'No tienes suficientes permisos'], 403);
         }
 
         if (!empty($request->input('nombre'))) {
@@ -136,6 +136,41 @@ class UsuarioController extends Controller
         }
         if (!empty($request->input('newPassword'))) {
             $user->password = bcrypt($request->input('newPassword'));
+        }
+
+        $res = $user->save();
+
+        if ($res) {
+            return response()->json(['message' => 'Usuario actualizado correctamente']);
+        }
+
+        return response()->json(['message' => 'Error al actualizar usuario'], 500);
+    }
+
+    public function updateByAdmin(Request $request, int $idUsuario)
+    {
+        if (empty($idUsuario)) { //El $id se usará cuando lo vaya a actualizar un usuario con permisos de administrador
+            $user = User::where('id', Auth::id())->first();
+        } else {
+            $user = User::where('id', $idUsuario)->first();
+        }
+
+        Validator::make($request->all(), [
+            'nombre' => 'required|string|max:100',
+            'rol' => 'required|in:Admin,Autor,Usuario'
+        ])->validate();
+
+        //return response()->json(['message' => $idUsuario], 403);
+
+        if (Auth::user()->rol !== 'Admin') {
+            return response()->json(['message' => 'No tienes suficientes permisos'], 403);
+        }
+
+        if (!empty($request->input('nombre'))) {
+            $user->nombre = $request->input('nombre');
+        }
+        if (!empty($request->input('rol'))) {
+            $user->rol = $request->input('rol');
         }
 
         $res = $user->save();
@@ -157,12 +192,9 @@ class UsuarioController extends Controller
     {
         $user = User::where('id', $idUsuario)->first();
 
-        if (($idUsuario == Auth::id()) || (Auth::user()->rol == 'Admin')) {
-            dd($idUsuario);
-        } else {
-            return response()->json(['message' => 'No tienes permisos'], 401);
+        if (($idUsuario !== Auth::id()) && (Auth::user()->rol !== 'Admin')) {
+            return response()->json(['message' => 'No tienes permisos']);
         }
-
         $res = $user->delete();
 
         if ($res) {

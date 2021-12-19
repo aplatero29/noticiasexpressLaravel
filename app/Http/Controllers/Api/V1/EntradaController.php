@@ -40,12 +40,14 @@ class EntradaController extends Controller
      */
     public function store(EntradaRequest $request)
     {
-        $request->validated();
+        //dd($request) TODO: MIRAR ESTO O QUE
+        //$request->validated();
 
         $user = Auth::user();
 
         $entrada = new Entrada();
-        $categoria = Categoria::find($request->input('categoria_id'));
+        $categoria = Categoria::where('nombre', $request->input('categoria'))->first();
+        //$categoria = Categoria::find($request->input('categoria_id'));
         $entrada->categoria()->associate($categoria);
         $entrada->user()->associate($user);
 
@@ -54,7 +56,7 @@ class EntradaController extends Controller
         $entrada->imagen = $url_image;
         $entrada->titulo = $request->input('titulo');
         $entrada->descripcion = $request->input('descripcion');
-        $entrada->categoria_id = $request->input('categoria_id');
+        $entrada->categoria_id = $categoria->id;
 
 
         $res = $entrada->save();
@@ -101,7 +103,7 @@ class EntradaController extends Controller
             /* 'user_id' => 'required|exists:Users,id',
             'categoria_id' => 'required|exists:Categorias,id' */
         ])->validate();
-        
+
         if (Auth::id() !== $entrada->user->id && Auth::user()->rol !== 'Admin') {
             return response()->json(['message' => 'You don\'t have permissions'], 403);
         }
@@ -116,12 +118,12 @@ class EntradaController extends Controller
             $url_image = $this->upload($request->file('imagen'));
             $entrada->imagen = $url_image;
         } */
-        if (!empty($request->input('categoria_id'))) {
+        /* if (!empty($request->input('categoria_id'))) {
             $entrada->categoria_id = $request->input('categoria_id');
         }
         if (!empty($request->input('user_id'))) {
             $entrada->user_id = $request->input('user_id');
-        }
+        } */
 
         $res = $entrada->save();
 
@@ -129,7 +131,7 @@ class EntradaController extends Controller
             return response()->json(['message' => 'Entrada actualizada correctamente'], 200);
         }
 
-        return response()->json(['message' => 'Error to update entry'], 500);
+        return response()->json(['message' => 'Error al actualizar entrada'], 500);
     }
 
     /**
@@ -143,9 +145,9 @@ class EntradaController extends Controller
         $res = $entrada->delete();
 
         if ($res) {
-            return response()->json(['message' => 'Entry deleted succesfully']);
+            return response()->json(['message' => 'Entrada eliminada correctamente']);
         }
 
-        return response()->json(['message' => 'Error to delete entry'], 500);
+        return response()->json(['message' => 'Error al eliminar entrada'], 500);
     }
 }

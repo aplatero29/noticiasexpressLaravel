@@ -29,7 +29,6 @@ class UsuarioRequest extends FormRequest
             'email' => 'required|string|email|max:150|unique:users',
             'password' => 'required|string|min:6',
             'rol' => 'required|in:Admin,Autor,Usuario',
-            //'avatar' => 'required|image|max:1024'
         ];
     }
 }
