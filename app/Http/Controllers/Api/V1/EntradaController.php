@@ -40,7 +40,7 @@ class EntradaController extends Controller
      */
     public function store(EntradaRequest $request)
     {
-        //dd($request) TODO: MIRAR ESTO O QUE
+        //dd($request)
         //$request->validated();
 
         $user = Auth::user();
@@ -51,7 +51,7 @@ class EntradaController extends Controller
         $entrada->categoria()->associate($categoria);
         $entrada->user()->associate($user);
 
-
+        
         $url_image = $this->upload($request->file('imagen'));
         $entrada->imagen = $url_image;
         $entrada->titulo = $request->input('titulo');

@@ -26,7 +26,7 @@ class EntradaRequest extends FormRequest
     {
         return [
             'titulo' => 'required|max:70',
-            'imagen' => 'required|image|max:2048',
+            'imagen' => 'file|max:2048',
             'descripcion' => 'required|max:4000',
             'categoria' => 'required|max:255',
         ];
